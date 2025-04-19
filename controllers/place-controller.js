@@ -56,15 +56,16 @@ const createPlace = (req, res, next) => {
     const { title, description, coordinates, address, creator } = req.body;
 
     const createdPlace = {
+        id: Math.random().toString(36).slice(2),
         title,
         description,
-        location:coordinates,
+        location: coordinates,
         address,
         creator
     }
     DUMMY_PLACES.push(createdPlace);
 
-    res.status(201).json({place: createdPlace});
+    res.status(201).json({ place: createdPlace });
 };
 
 exports.getPlaceById = getPlaceById;
