@@ -14,13 +14,19 @@ router.post('/',
     [
         // check is a middleWare function coming from express-validator, have various methods and functions;
         check('title').not().isEmpty(),
-        check('description').isLength({ max: 5 }),
+        check('description').isLength({ min: 5 }),
         check('address').not().isEmpty(),
     ],
     placeControllers.createPlace
 );
 
-router.patch('/:pid', placeControllers.updatePlace);
+router.patch('/:pid',
+    [
+        // check is a middleWare function coming from express-validator, have various methods and functions;
+        check('title').not().isEmpty(),
+        check('description').isLength({ min: 5 })
+    ],
+    placeControllers.updatePlace);
 
 router.delete('/:pid', placeControllers.deletePlace);
 
