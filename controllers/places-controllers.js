@@ -34,24 +34,25 @@ const getPlaceById = (req, res, next) => {
 
 
 // 2nd function middleWare
-const getPlaceByUserId = (req, res, next) => {
+const getPlacesByUserId = (req, res, next) => {
     const userId = req.params.uid;
-    const place = DUMMY_PLACES.find(p => {
+
+    const places = DUMMY_PLACES.filter(p => {
         return p.creator === userId;
     });
-    // console.log('req.ip', req.headers)
-    if (!place) {
+
+    if (!places || places.length === 0) {
         return next(
-            new HttpError('Could not find a place for the provided user id', 404)
+            new HttpError('Could not find a places for the provided user id', 404)
         );
 
         // return res.status(404).json({ message: "Couldn't find a place for the provided user id." })
     }
 
-    res.json({ place })
+    res.json({ places })
 };
 
-
+// 3rd function middleWare
 const createPlace = (req, res, next) => {
     const { title, description, coordinates, address, creator } = req.body;
 
@@ -68,6 +69,7 @@ const createPlace = (req, res, next) => {
     res.status(201).json({ place: createdPlace });
 };
 
+// 4th function middleWare
 const updatePlace = (req, res, next) => {
     const { title, description } = req.body;
     const placeId = req.params.pid;
@@ -83,15 +85,16 @@ const updatePlace = (req, res, next) => {
 
 };
 
+// 5th  function middleWare
 const deletePlace = (req, res, next) => {
     const placeId = req.params.pid;
     DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== placeId);
     res.status(200).json({ message: 'Place Deleted' });
 };
 
-
+// Exports Stars..
 exports.getPlaceById = getPlaceById;
-exports.getPlaceByUserId = getPlaceByUserId;
+exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
 exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;

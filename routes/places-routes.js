@@ -1,16 +1,24 @@
 const express = require("express");
+const { check } = require('express-validator')
 
-const placeControllers = require('../controllers/place-controller');
+const placeControllers = require('../controllers/places-controllers');
 
 const router = express.Router();
 
 
-
 router.get('/:pid', placeControllers.getPlaceById);
 
-router.get('/user/:uid', placeControllers.getPlaceByUserId);
+router.get('/user/:uid', placeControllers.getPlacesByUserId);
 
-router.post('/', placeControllers.createPlace);
+router.post('/',
+    [
+        // check is a middleWare function coming from express-validator, have various methods and functions;
+        check('title').not().isEmpty(),
+        check('description').isLength({ max: 5 }),
+        check('address').not().isEmpty(),
+    ],
+    placeControllers.createPlace
+);
 
 router.patch('/:pid', placeControllers.updatePlace);
 
