@@ -1,5 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -12,7 +14,7 @@ app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
 
 app.use((req, res, next) => {
-    const error = new HttpError('Could not find this route',404);
+    const error = new HttpError('Could not find this route', 404);
     throw error;
 });
 
@@ -27,5 +29,12 @@ app.use((error, req, res, next) => {
     res.json({ message: error.message || 'An Unkwon Error Occured!' })
 });
 
-app.listen(5000)
-console.log('server is running')
+mongoose
+    .connect(`mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_USER_PASSWORD}@placesappcluster.0ixtjhc.mongodb.net/`)
+    .then(()=>{
+        app.listen(5000)
+        console.log('server is running')
+    })
+    .catch((error)=>{
+        console.log('error while connecting Database, DB Connection Failed', error)
+    });
