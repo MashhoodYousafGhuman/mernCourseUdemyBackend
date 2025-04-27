@@ -30,10 +30,11 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-    .connect(`mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_USER_PASSWORD}@placesappcluster.0ixtjhc.mongodb.net/`)
+    .connect(`mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_USER_PASSWORD}@${process.env.DB_CLUSTER_NAME}.0ixtjhc.mongodb.net/`)
     .then(()=>{
         app.listen(5000)
-        console.log('server is running')
+        console.log('Database Connected');
+        console.log('server is running');
     })
     .catch((error)=>{
         console.log('error while connecting Database, DB Connection Failed', error)

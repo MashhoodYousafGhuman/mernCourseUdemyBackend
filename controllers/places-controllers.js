@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 
 const HttpError = require("../models/http-error");
 const getCoordinatesForAddress = require('../util/location');
+const Place = require('../models/placeSchema');
 
 let DUMMY_PLACES = [{
     id: 'p1',
@@ -72,15 +73,24 @@ const createPlace = async (req, res, next) => {
         return next(error);
     }
 
-    const createdPlace = {
-        id: Math.random().toString(36).slice(2),
+    const createdPlace = new Place({
         title,
         description,
-        location: coordinates,
         address,
+        location: coordinates,
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ_G9U9095poYEIvtg8fnA2Ef3dcjLEebptQ&s',
         creator
+    });
+    
+    try {
+        await createdPlace.save();
+    } catch (err) {
+        const error = new HttpError('Error While creating a Place, please try again later.', 500);
+        return next(error);
     }
-    DUMMY_PLACES.push(createdPlace);
+
+    // .push  isn't logic here beacuse now we are working with database the logic now is .save();
+    // DUMMY_PLACES.push(createdPlace);
 
     res.status(201).json({ place: createdPlace });
 };
