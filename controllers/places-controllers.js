@@ -17,23 +17,34 @@ let DUMMY_PLACES = [{
 }];
 
 
-const getPlaceById = (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
     const placeId = req.params.pid;
-    const place = DUMMY_PLACES.find(p => {
-        return p.id === placeId;
-    });
+
+    // the find method was using where there was no database, so for now using findById method to find from database!
+    // const place = DUMMY_PLACES.find(p => {
+    //     return p.id === placeId;
+    // });
+
+    let place;
+    try {
+        place = await Place.findById(placeId);
+    } catch (err) {
+        const error = new HttpError('Something went wrong, could not find a place.', 500);
+        return next(error);
+    }
 
     if (!place) {
-        // this will work with error handling middleWare, because i have create the HttpError class that will also short the code therefore, not using this but commenting this due to memory call;
+        // this will work with error handling middleWare, because i have create the HttpError class that will also short the code therefore, not using this but commenting this due to memory call or revision of concepts;
 
         // const error = new Error('Could not find a place for the provided id')
         // error.code = 404
 
-        // HttpError is class Creating by me 
-        throw new HttpError('Could not find a place for the provided id', 404);
+        // HttpError is class Creating by me;
+        const error = new HttpError('Could not find a place for the provided id', 404);
+        return next(error);
     }
 
-    res.json({ place });
+    res.json({ place: place.toObject({ getters: true }) });
 };
 
 
@@ -81,7 +92,7 @@ const createPlace = async (req, res, next) => {
         image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ_G9U9095poYEIvtg8fnA2Ef3dcjLEebptQ&s',
         creator
     });
-    
+
     try {
         await createdPlace.save();
     } catch (err) {
