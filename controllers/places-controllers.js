@@ -158,13 +158,28 @@ const updatePlace = async (req, res, next) => {
 };
 
 // 5th  function middleWare
-const deletePlace = (req, res, next) => {
+const deletePlace = async (req, res, next) => {
     const placeId = req.params.pid;
-    if (!DUMMY_PLACES.find(p => p.id === placeId)) {
-        throw new HttpError('Could not find a place for that id.', 404)
+    // if (!DUMMY_PLACES.find(p => p.id === placeId)) {
+    //     throw new HttpError('Could not find a place for that id.', 404)
+    // }
+    let place;
+    try {
+        place = await Place.findById(placeId);
+    } catch (err) {
+        const error = new HttpError('Something went wrong while deleting a place, please try again later!', 500)
+        return next(error);
     }
 
-    DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== placeId);
+    try {
+        // await place.remove(); this is deprcated from mongoose and older syntax , will use deleteOne() and deleteMany()
+        await place.deleteOne();
+    } catch (err) {
+        const error = new HttpError('Something went wrong while deleting a place, please try again later!', 500)
+        return next(error);
+    }
+
+    // DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== placeId);
     res.status(200).json({ message: 'Place Deleted' });
 };
 
