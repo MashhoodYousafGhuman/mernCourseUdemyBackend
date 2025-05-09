@@ -15,12 +15,16 @@ const DUMMY_USERS = [
 const getUsers = async (req, res, next) => {
 	// const user = User.find({}, 'email name');
 	// both upper and lower approaches can be used
-
 	let users;
 	try {
 		users = await User.find({}, '-password');
 	} catch (err) {
-		const error = new HttpError('Fetching users failed, please try again later;', 500)
+		const error = new HttpError('Fetching users failed, please try again later', 500)
+		return next(error);
+	}
+
+	if (!users || users.length === 0) {
+		const error = new HttpError('It seems there is no even a single user, please create a user first;', 404)
 		return next(error);
 	}
 
@@ -37,7 +41,7 @@ const signup = async (req, res, next) => {
 		);
 	}
 
-	const { name, email, password, places } = req.body;
+	const { name, email, password } = req.body;
 
 	// const hasUser = DUMMY_USERS.find(u => u.email === email);
 	// if (hasUser) {
@@ -63,7 +67,7 @@ const signup = async (req, res, next) => {
 		email,
 		password,
 		image: 'https://images.unsplash.com/photo-1605496036006-fa36378ca4ab?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHVybHxlbnwwfHwwfHx8MA%3D%3D',
-		places
+		places: []
 	})
 
 	try {
