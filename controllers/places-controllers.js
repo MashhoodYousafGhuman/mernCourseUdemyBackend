@@ -1,8 +1,10 @@
 const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 
 const HttpError = require("../models/http-error");
 const getCoordinatesForAddress = require('../util/location');
 const Place = require('../models/placeSchema');
+const User = require('../models/userSchema');
 
 let DUMMY_PLACES = [{
     id: 'p1',
@@ -102,8 +104,31 @@ const createPlace = async (req, res, next) => {
         creator
     });
 
+    let user;
     try {
-        await createdPlace.save();
+        user = await User.findById(creator);
+    } catch (err) {
+        const error = new HttpError('Creating Place failed, please try again later', 500)
+        return next(error);
+    }
+
+    if (!user) {
+        const error = new HttpError('Could not find a user with provided id', 404);
+        return next(error);
+    }
+    console.log('user from placeControll file, from create place', user);
+
+
+
+    try {
+        // await createdPlace.save(); commentig this line because first we was saving the place without adding the placeId to the corresponding user, was doing with a dummyId data, now if we create a place the placeId will also be added to the related/corresponding user, to acheive this we will create session and transactions, if feeling unfamiliar with the term session and transactions , first learn this topics , is very easy and interesting
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+        await createdPlace.save({ session: sess });
+        user.places.push(createdPlace);
+        await user.save({ session: sess });
+        await sess.commitTransaction();
+
     } catch (err) {
         const error = new HttpError('Error While creating a Place, please try again later.', 500);
         return next(error);
