@@ -6,26 +6,10 @@ const getCoordinatesForAddress = require('../util/location');
 const Place = require('../models/placeSchema');
 const User = require('../models/userSchema');
 
-let DUMMY_PLACES = [{
-    id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapper',
-    location: {
-        lat: 40.7484474,
-        lng: -73.9871516
-    },
-    address: '20 W 34th St, New York, NY 10001',
-    creator: 'u1'
-}];
 
-
+// 1st middleWare function 
 const getPlaceById = async (req, res, next) => {
     const placeId = req.params.pid;
-
-    // the find method was using where there was no database, so for now using findById method to find from database!
-    // const place = DUMMY_PLACES.find(p => {
-    //     return p.id === placeId;
-    // });
 
     let place;
     try {
@@ -51,12 +35,9 @@ const getPlaceById = async (req, res, next) => {
 };
 
 
-// 2nd function middleWare
+// 2nd middleWare function 
 const getPlacesByUserId = async (req, res, next) => {
     const userId = req.params.uid;
-    // const places = DUMMY_PLACES.filter(p => {
-    //     return p.creator === userId;
-    // });
 
     //                                  Approach 1
     // let places;
@@ -71,12 +52,11 @@ const getPlacesByUserId = async (req, res, next) => {
     //     return next(
     //         new HttpError('Could not find a places for the provided user id', 404)
     //     );
-    //     // return res.status(404).json({ message: "Couldn't find a place for the provided user id." })
     // }
-    
-    // res.json({ places: .places.map(place => place.toObject({ getters: true })) })
- 
-   
+
+    // res.json({ places: places.map(place => place.toObject({ getters: true })) })
+
+
     //                                   Approach 2
     let userWithPlaces;
     try {
@@ -90,14 +70,13 @@ const getPlacesByUserId = async (req, res, next) => {
         return next(
             new HttpError('Could not find a places for the provided user id', 404)
         );
-        // return res.status(404).json({ message: "Couldn't find a place for the provided user id." })
     }
 
     // find() from mongoose → returns an array of documents. therefore we cant use .toObject() but can run map!
     res.json({ places: userWithPlaces.places.map(place => place.toObject({ getters: true })) })
 };
 
-// 3rd function middleWare
+// 3rd middleWare function 
 const createPlace = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -140,7 +119,7 @@ const createPlace = async (req, res, next) => {
 
 
     try {
-        // await createdPlace.save(); commentig this line because first we was saving the place without adding the placeId to the corresponding user, was doing with a dummyId data, now if we create a place the placeId will also be added to the related/corresponding user, to acheive this we will create session and transactions, if feeling unfamiliar with the term session and transactions , first learn this topics , is very easy and interesting
+        // await createdPlace.save(); commentig this line because first we was saving the place without adding the placeId to the corresponding user, was doing with a dummyId data, now if we create a place the placeId will also be added to the related/corresponding user, to acheive this we will create session and transactions, if feeling unfamiliar with the term session and transactions , first learn this topics , is very easy and interesting.
         const sess = await mongoose.startSession();
         sess.startTransaction();
         await createdPlace.save({ session: sess });
@@ -153,13 +132,10 @@ const createPlace = async (req, res, next) => {
         return next(error);
     }
 
-    // .push  isn't logic here beacuse now we are working with database the logic now is .save();
-    // DUMMY_PLACES.push(createdPlace);
-
     res.status(201).json({ place: createdPlace });
 };
 
-// 4th function middleWare
+// 4th middleWare function 
 const updatePlace = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -203,12 +179,10 @@ const updatePlace = async (req, res, next) => {
 
 };
 
-// 5th  function middleWare
+// 5th  middleWare function 
 const deletePlace = async (req, res, next) => {
     const placeId = req.params.pid;
-    // if (!DUMMY_PLACES.find(p => p.id === placeId)) {
-    //     throw new HttpError('Could not find a place for that id.', 404)
-    // }
+    
     let place;
     try {
         place = await Place.findById(placeId).populate('creator');
@@ -239,11 +213,9 @@ const deletePlace = async (req, res, next) => {
         return next(error);
     }
 
-    // DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== placeId);
     res.status(200).json({ message: 'Place Deleted' });
 };
 
-// Exports Stars..
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
