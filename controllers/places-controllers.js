@@ -57,25 +57,44 @@ const getPlacesByUserId = async (req, res, next) => {
     // const places = DUMMY_PLACES.filter(p => {
     //     return p.creator === userId;
     // });
-    let places;
+
+    //                                  Approach 1
+    // let places;
+    // try {
+    //     places = await Place.find({ creator: userId })
+    // } catch (err) {
+    //     const error = new HttpError('Could not find a places for the provided user id', 404);
+    //     return next(error);
+    // }
+
+    // if (!places || places.length === 0) {
+    //     return next(
+    //         new HttpError('Could not find a places for the provided user id', 404)
+    //     );
+    //     // return res.status(404).json({ message: "Couldn't find a place for the provided user id." })
+    // }
+    
+    // res.json({ places: .places.map(place => place.toObject({ getters: true })) })
+ 
+   
+    //                                   Approach 2
+    let userWithPlaces;
     try {
-        places = await Place.find({ creator: userId })
+        userWithPlaces = await User.findById(userId).populate('places')
     } catch (err) {
         const error = new HttpError('Could not find a places for the provided user id', 404);
         return next(error);
     }
 
-
-    if (!places || places.length === 0) {
+    if (!userWithPlaces || userWithPlaces.places.length === 0) {
         return next(
             new HttpError('Could not find a places for the provided user id', 404)
         );
-
         // return res.status(404).json({ message: "Couldn't find a place for the provided user id." })
     }
 
     // find() from mongoose → returns an array of documents. therefore we cant use .toObject() but can run map!
-    res.json({ places: places.map(place => place.toObject({ getters: true })) })
+    res.json({ places: userWithPlaces.places.map(place => place.toObject({ getters: true })) })
 };
 
 // 3rd function middleWare
