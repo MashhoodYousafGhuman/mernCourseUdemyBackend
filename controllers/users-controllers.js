@@ -35,12 +35,6 @@ const signup = async (req, res, next) => {
 
 	const { name, email, password } = req.body;
 
-	// const hasUser = DUMMY_USERS.find(u => u.email === email);
-	// if (hasUser) {
-	// 	throw new HttpError('Could not create a User, email already exists', 422)
-	// 	// 422 status code for invalid user Input;
-	// }
-
 	let existingUser;
 	try {
 		existingUser = await User.findOne({ email: email });
@@ -89,14 +83,8 @@ const login = async (req, res, next) => {
 		return next(error);
 	}
 
-	// if (!identifiedUser || identifiedUser.password !== password) {
-	// 	throw new HttpError('Could not identify user, credentials seems to be wrong.', 401);
-	// }
-
 	res.json({ message: 'Logged in' });
 };
-
-
 
 exports.getUsers = getUsers;
 exports.signup = signup;
