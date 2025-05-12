@@ -22,7 +22,6 @@ router.post('/',
 
 router.patch('/:pid',
     [
-        // check is a middleWare function coming from express-validator, have various methods and functions;
         check('title').not().isEmpty(),
         check('description').isLength({ min: 5 })
     ],

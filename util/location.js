@@ -7,8 +7,8 @@ const API_KEY = '';
 // The API key is provided by Google after setting up a billing plan.
 
 async function getCoordinatesForAddress(address) {
-    // this is for only if you dont have credit or debit card asked by google;
     return {
+        // this is for only if you dont have credit or debit card asked by google;
         lat: 40.7484474,
         lng: -73.9871516
     };

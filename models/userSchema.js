@@ -11,7 +11,7 @@ const userSchema = new Schema({
 });
 
 // Don't add userSchema.plugin(uniqueValidator);
-// instructor using mongoose-unique-validator but deprecated in newer versions there unique:true will handle the same work
+// instructor using mongoose-unique-validator but deprecated in newer versions, here the unique:true will handle the same work
 
 module.exports = mongoose.model('User', userSchema);
 
