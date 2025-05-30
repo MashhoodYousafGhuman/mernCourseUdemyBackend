@@ -26,6 +26,7 @@ const getUsers = async (req, res, next) => {
 
 const signup = async (req, res, next) => {
 	const errors = validationResult(req);
+
 	if (!errors.isEmpty()) {
 		console.log('errors ==>', errors)
 		return next(
@@ -52,7 +53,7 @@ const signup = async (req, res, next) => {
 		name,
 		email,
 		password,
-		image: 'https://images.unsplash.com/photo-1605496036006-fa36378ca4ab?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHVybHxlbnwwfHwwfHx8MA%3D%3D',
+		image: req.file.path,
 		places: []
 	})
 

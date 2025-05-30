@@ -98,7 +98,7 @@ const createPlace = async (req, res, next) => {
         description,
         address,
         location: coordinates,
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ_G9U9095poYEIvtg8fnA2Ef3dcjLEebptQ&s',
+        image: req.file.path,
         creator
     });
 
