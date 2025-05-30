@@ -3,7 +3,7 @@ const multer = require('multer')
 const MIME_TYPE_MAP = {
     'image/png': 'png',
     'image/jpeg': 'jpeg',
-    'image/png': 'png',
+    'image/jpg': 'jpg',
 };
 
 const fileUpload = multer({
@@ -17,7 +17,12 @@ const fileUpload = multer({
             const randomID = Math.random().toString(36).slice(2);
             cb(null, randomID + '.' + ext)
         }
-    })
+    }),
+    fileFilter: (req, file, cb) => {
+        let isValid = !!MIME_TYPE_MAP[file.mimetype]
+        const error = isValid ? null : new Error("Invalid mime type");
+        cb(error, isValid);
+    }
 })
 
 module.exports = fileUpload;
