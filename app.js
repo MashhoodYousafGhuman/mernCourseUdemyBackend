@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
     if (req.file) {
         fs.unlink(req.file.path, (err) => {
-            console.log('err', err);
+            console.log('err while unlinking file in app.js', err)
         });
     }
 
