@@ -1,4 +1,6 @@
 require('dotenv').config();
+
+const fs = require('fs')
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -33,6 +35,12 @@ app.use((req, res, next) => {
 // middleWare for sending errors, like a errorAPI , this middleWare will run or apply  on every function or middleWare that have error attached to it
 
 app.use((error, req, res, next) => {
+    if (req.file) {
+        fs.unlink(req.file.path, (err) => {
+            console.log('err', err);
+        });
+    }
+
     if (res.headerSent) {
         return next(error)
     }
