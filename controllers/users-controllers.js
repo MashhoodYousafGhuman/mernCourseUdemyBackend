@@ -61,7 +61,7 @@ const signup = async (req, res, next) => {
 	const createdUser = new User({
 		name,
 		email,
-		password : hashedPassword,
+		password: hashedPassword,
 		image: req.file.path,
 		places: []
 	})
@@ -88,7 +88,22 @@ const login = async (req, res, next) => {
 		return next(error);
 	}
 
-	if (!existingUser || existingUser.password !== password) {
+
+
+	if (!existingUser) {
+		const error = new HttpError('Invalid Credentials, please try again', 422);
+		return next(error);
+	}
+
+	let isValidPassword;
+	try {
+		isValidPassword = await bcrypt.compare(password, existingUser.password)
+	} catch (err) {
+		const error = new HttpError('Sign-in failed, please try again later;', 500);
+		return next(error);
+	}
+	
+	if (!isValidPassword) {
 		const error = new HttpError('Invalid Credentials, please try again', 422);
 		return next(error);
 	}
