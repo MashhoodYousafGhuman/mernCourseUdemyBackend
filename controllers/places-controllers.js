@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
@@ -182,7 +184,7 @@ const updatePlace = async (req, res, next) => {
 // 5th  middleWare function 
 const deletePlace = async (req, res, next) => {
     const placeId = req.params.pid;
-    
+
     let place;
     try {
         place = await Place.findById(placeId).populate('creator');
@@ -195,6 +197,8 @@ const deletePlace = async (req, res, next) => {
         const error = new HttpError('Could not find the place for this id', 404)
         return next(error);
     }
+
+    const imagePath = place.image;
 
     try {
         const sess = await mongoose.startSession();
@@ -212,6 +216,10 @@ const deletePlace = async (req, res, next) => {
         const error = new HttpError('Something went wrong while deleting a place, please try again later!', 500)
         return next(error);
     }
+
+    fs.unlink(imagePath, err => {
+        console.log('err while unlinking file in places', err)
+    })
 
     res.status(200).json({ message: 'Place Deleted' });
 };
