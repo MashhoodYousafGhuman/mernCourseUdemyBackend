@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
         if (!token) {
             throw new Error('Authentications Failed')
         }
-        const decodedToken = jwt.verify(token, 'superSecretDontShare');
+        const decodedToken = jwt.verify(token, process.env.JWT_KEY );
         req.userData = { userId: decodedToken.userId };
         console.log('token', token)
         next();
