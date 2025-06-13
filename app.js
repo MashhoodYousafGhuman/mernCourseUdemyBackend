@@ -62,7 +62,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-    .connect(`mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_USER_PASSWORD}@${process.env.DB_CLUSTER_NAME}.0ixtjhc.mongodb.net/`)
+    .connect(process.env.MONGO_URL || `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_USER_PASSWORD}@${process.env.DB_CLUSTER_NAME}.0ixtjhc.mongodb.net/`)
     .then(() => {
         app.listen(process.env.PORT || 5000)
         console.log('Database Connected');
